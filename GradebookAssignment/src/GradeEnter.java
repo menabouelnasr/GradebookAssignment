@@ -67,7 +67,7 @@ public class GradeEnter extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		        
          output+="<table class= \"table table-striped\">";
-         output+="<tr><th align=\"center\">Assignment Name</th><th align=center>Grade</th></tr> "; 
+         output+="<tr><th style=\"text-align:center;\">Assignment Name</th><th style=\"text-align:center;\">Grade</th></tr> "; 
          
         List<Gradebookjpa> a = getGrades();
  		for(Gradebookjpa b : a)
@@ -78,16 +78,14 @@ public class GradeEnter extends HttpServlet {
  		}
  		 average2=average/count* 100;
  		 aveT+="<p></p><table class= \"table table-striped\">";
-         aveT+="<tr><th>Average</th></tr> ";
+         aveT+="<tr><th style=\"text-align:center;\">Average</th></tr> ";
          aveT+= "<tr><td>" + String.valueOf(average2) +"</td></tr>";
          
  	   request.setAttribute("message", output);
        request.setAttribute("average", aveT);
 	   getServletContext().getRequestDispatcher("/Table.jsp").forward(request,response);
 	   output="";
-	   aveT="";
-         
-         
+	   aveT="";  
        
 	}
 	
