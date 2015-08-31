@@ -10,11 +10,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import customTools.DBUtil;
+import model.Gradebookjpa;
 
 
 /**
@@ -41,63 +46,44 @@ public class InputName extends HttpServlet
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-    private void addToDatabase ( String assignmentName, int grade ) {
-         	//URL of Oracle database server
-         	 
-              String url = "jdbc:oracle:thin:testuser/password@localhost"; 
-              try {
-				Class.forName("oracle.jdbc.driver.OracleDriver");
-			} catch (ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-              
-              //properties for creating connection to Oracle database
-              Properties props = new Properties();
-              props.setProperty("user", "testdb");
-              props.setProperty("password", "password");
-            
-              //creating connection to Oracle database using JDBC
-              try {
-      			conn = DriverManager.getConnection(url,props);
-      		} catch (SQLException e) {
-      			// TODO Auto-generated catch block
-      			e.printStackTrace();
-      		}
-              Statement stmt = null;
-			try {
-				stmt = conn.createStatement();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try 
-			{    
-				String insertQuery = "insert into Gradebook";
-				insertQuery += " values ( '" + assignmentName + "', " + grade + " )"; 
-				stmt.execute ( insertQuery );   
-				
-				System.out.println(insertQuery);
-				conn.close();    
-			} 
-			catch ( SQLException ex ) 
-			{
-				ex.printStackTrace();
-			}
-
+    public static void insert(Gradebookjpa grade) 
+    {
+    	EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    	EntityTransaction trans = em.getTransaction();
+    	trans.begin(); 
+    	try {
+    	em.persist(grade);
+    	trans.commit();
+    	} catch (Exception e) {
+    	System.out.println(e);
+    	trans.rollback();
+    	} finally {
+    
+    	}
     }
+
     protected void processRequest( HttpServletRequest request, HttpServletResponse response )throws ServletException, IOException 
     {
     	String assignmentName;
     	String tempStr;
     	int grade = 0;
-    	  
+    	 
+    	EntityManager em = DBUtil.getEmFactory().createEntityManager();
     	assignmentName = (String)request.getParameter( "Assignment" );
     	tempStr = (String)request.getParameter( "grade" );
-    	//System.out.println(tempStr);
-    	//System.out.println(assignmentName);
     	grade = Integer.parseInt( tempStr );
-    	addToDatabase ( assignmentName, grade );
+    	
+    	try 
+		{   model.Gradebookjpa user = new Gradebookjpa();
+			user.setAssignment(assignmentName);
+			user.setGrade(grade);
+			insert(user);
+		
+		} catch (Exception e){
+			System.out.println(e);
+		} finally {
+		}
+
     	
 
     }

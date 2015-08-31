@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +15,12 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import customTools.DBUtil;
+import model.Gradebookjpa;
+
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -40,64 +46,49 @@ public class GradeEnter extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    public List<Gradebookjpa> getGrades()
+    {
+    	EntityManager em = DBUtil.getEmFactory().createEntityManager();
+    	String qString = "Select g from Gradebookjpa g";
+    	TypedQuery<Gradebookjpa> q = em.createQuery(qString, Gradebookjpa.class);
+    	
+    	List<Gradebookjpa> grades;
+    	try{ grades= q.getResultList();
+    	if(grades == null || grades.isEmpty())
+    		grades= null;
+    	}
+    	finally
+    	{
+    		em.close();
+    	}
+    	return grades;
+    	
+    }
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		PrintWriter out = response.getWriter();
-         response.setContentType("text/html");
-         out.println("<html><body>");
-         try {
-        	//URL of Oracle database server
-        	 
-             String url = "jdbc:oracle:thin:testuser/password@localhost"; 
-             Class.forName("oracle.jdbc.driver.OracleDriver");
-             
-             //properties for creating connection to Oracle database
-             Properties props = new Properties();
-             props.setProperty("user", "testdb");
-             props.setProperty("password", "password");
-           
-             //creating connection to Oracle database using JDBC
-             try {
-     			conn = DriverManager.getConnection(url,props);
-     		} catch (SQLException e) {
-     			// TODO Auto-generated catch block
-     			e.printStackTrace();
-     		}
-          
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("select * from Gradebook");     
-
-         output+="<table border=2 color=white bgcolor=black>";
-         output+="<tr><th>Assignment </th><th>Grade</th></tr> ";   
-         while(rs.next())
-        	 {
-        		 assignment= rs.getString("Assigment");
-        		 System.out.println(assignment);
-        		 grade= rs.getString("Grade");
-        		 grade2= Integer.parseInt(grade);
-        		 average+=grade2;
-        		 output+= "<tr><td>" + assignment +"</td><td>"+ grade + "</td></tr>"; 
-        		 count++;
-             
-        	 }
-         aveT+="<p></p><table alight=center border=1 color=white bgcolor=white>";
-         aveT+="<tr><th>Average</th></tr> ";
-         System.out.println(count);
-         average2=average/count;
-         aveT+= "<tr><td>" + String.valueOf(average2) +"</td></tr>";;
-         conn.close();
-        }
-         catch (Exception e) 
-         {
-        	 e.getMessage();
-         }
+		        
+         output+="<table class= \"table table-striped\">";
+         output+="<tr><th align=\"center\">Assignment Name</th><th align=center>Grade</th></tr> "; 
          
-         request.setAttribute("message", output);
-         request.setAttribute("average", aveT);
-	     getServletContext().getRequestDispatcher("/Table.jsp").forward(request,response);
-	     output="";
-	     aveT="";
-	 
+        List<Gradebookjpa> a = getGrades();
+ 		for(Gradebookjpa b : a)
+ 		{
+ 			output+= "<tr><td>"+ b.getAssignment()+"</td><td>" + b.getGrade()+"</td></tr>";
+ 			average+= b.getGrade();
+ 			count +=100;
+ 		}
+ 		 average2=average/count* 100;
+ 		 aveT+="<p></p><table class= \"table table-striped\">";
+         aveT+="<tr><th>Average</th></tr> ";
+         aveT+= "<tr><td>" + String.valueOf(average2) +"</td></tr>";
+         
+ 	   request.setAttribute("message", output);
+       request.setAttribute("average", aveT);
+	   getServletContext().getRequestDispatcher("/Table.jsp").forward(request,response);
+	   output="";
+	   aveT="";
+         
+         
+       
 	}
 	
 	/**
