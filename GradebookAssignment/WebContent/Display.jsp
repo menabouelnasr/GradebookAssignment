@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <style> 
   body {text: white; background-color: white;  text-align: center; }
-   h1 {text: white;}
+   p {text: white;}
    h2{text:white;}
    </style>
 </head>
@@ -25,9 +25,9 @@
 
 <form action="InputName" method="post">
 <br></br>
-
+<p>
 Please enter the assignment name and grade and submit each time.<br>
-Once complete, you may check the input history and class average.</br>
+Once complete, you may check the input history and class average.</br></p>
 <br>
 Assignment Name:<br>
 <input type="edit" name="Assignment"><br>
