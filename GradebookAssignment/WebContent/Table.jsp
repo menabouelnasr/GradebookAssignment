@@ -19,6 +19,9 @@
 <nav class="navbar navbar-inverse">
 <div class="jumbotron"> 
   <h1>Gradebook Table</h1>
+  <form action="Display.jsp">
+  <input type=submit name=submit value="Back to Gradebook Entry Form"> </input>
+  </form>
 </div>
 </nav>
 ${message}

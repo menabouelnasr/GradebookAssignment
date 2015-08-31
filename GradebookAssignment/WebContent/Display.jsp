@@ -21,13 +21,15 @@
 <div class="container">
   <h1>Welcome to Ms. Mackleberry's Gradebook!</h1>
 </div>
+<form action="GradeEnter" method="post">
+<input  type=submit name=submit value="Enter Gradebook"> </input>
+</form>
 </div>
 </nav>
 <form action="InputName" method="post">
-<br></br>
 <p>
 Please enter the assignment name and grade and submit each time.<br>
-Once complete, you may check the input history and class average.</br></p>
+To check your input history or class average, you may enter the gradebook by clicking above.</br></p>
 <br>
 Assignment Name:<br>
 <input type="edit" name="Assignment"><br>
@@ -35,12 +37,10 @@ Assignment Name:<br>
 Grade:<br>
 <input type="edit" name="grade"><br>
 <br>
-<input href="InputName" type=submit name=submit value="Submit"> </input>
+<input type=submit name=submit value="Submit"> </input>
 </form>
-<form action="GradeEnter" method="post">
-<br>
-<input href="GradeEnter" type=submit name=submit value="Grade Average"> </input>
-</form>
+
+
     
 </body>
 </html>
